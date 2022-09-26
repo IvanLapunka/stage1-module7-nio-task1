@@ -1,5 +1,6 @@
 package com.epam.mjc.nio;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,10 +16,12 @@ public class FileReader {
         Path path = Paths.get(file.toURI());
         Profile result = new Profile();
         if (Files.exists(path, LinkOption.NOFOLLOW_LINKS)) {
-            try {
-                final List<String> strings = Files.readAllLines(path);
-                strings.forEach(s -> fillColumn(result, s));
-            } catch (IOException e) {
+            try(BufferedReader br = new BufferedReader(new java.io.FileReader(file))) {
+                String next;
+                while ((next = br.readLine()) != null) {
+                    fillColumn(result, next);
+                }
+            }  catch (IOException e) {
                 e.printStackTrace();
             }
         }
